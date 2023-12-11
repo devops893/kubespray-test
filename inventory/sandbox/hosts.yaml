@@ -1,0 +1,66 @@
+all:
+  hosts:
+// Control Plane Nodes --> Start
+    node1:
+      ansible_host: 10.13.10.2
+      ip: 10.13.10.2
+      access_ip: 10.13.10.2
+    node2:
+      ansible_host: 10.13.10.3
+      ip: 10.13.10.3
+      access_ip: 10.13.10.3
+    node3:
+      ansible_host: 10.13.10.4
+      ip: 10.13.10.4
+      access_ip: 10.13.10.4
+// Control Plane Node -- > End
+    node4:
+      ansible_host: 10.13.10.20
+      ip: 10.13.10.20
+      access_ip: 10.13.10.20
+    node5:
+      ansible_host: 10.13.10.21
+      ip: 10.13.10.21
+      access_ip: 10.13.10.21
+    node6:
+      ansible_host: 10.13.10.22
+      ip: 10.13.10.22
+      access_ip: 10.13.10.22
+  children:
+    kube_control_plane:
+      hosts:
+        node1:
+        node2:
+        node3:
+    kube_node:
+      hosts:
+        node4:
+        node5:
+        node6:
+    etcd:
+      hosts:
+        node1:
+        node2:
+        node3:
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_node:
+    calico_rr:
+      hosts: {}
+    cloud-worker:
+      hosts:
+        node4:
+        node5:
+        node6:
+      vars:
+        node_labels:
+          node-type: cloud-worker
+    cloud-master:
+      hosts:
+        node1:
+        node2:
+        node3:
+      vars:
+        node_labels:
+          node-type: cloud-master
